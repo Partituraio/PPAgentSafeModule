@@ -1,0 +1,44 @@
+{
+  "language": "Solidity",
+  "sources": {
+    "contracts/IPPAgentV2.sol": {
+      "content": "// SPDX-License-Identifier: MIT\npragma solidity ^0.8.12;\n\ninterface IPPAgentV2Executor {\n    function execute_44g58pv() external;\n}\n\ninterface IPPAgentV2Viewer {\n    struct Job {\n        uint8 config;\n        bytes4 selector;\n        uint88 credits;\n        uint16 maxBaseFeeGwei;\n        uint16 rewardPct;\n        uint32 fixedReward;\n        uint8 calldataSource;\n        // For interval jobs\n        uint24 intervalSeconds;\n        uint32 lastExecutionAt;\n    }\n\n    struct Resolver {\n        address resolverAddress;\n        bytes resolverCalldata;\n    }\n\n    function getConfig()\n        external\n        view\n        returns (\n            uint256 minKeeperCvp_,\n            uint256 pendingWithdrawalTimeoutSeconds_,\n            uint256 feeTotal_,\n            uint256 feePpm_,\n            uint256 lastKeeperId_\n        );\n\n    function getKeeper(\n        uint256 keeperId_\n    )\n        external\n        view\n        returns (\n            address admin,\n            address worker,\n            bool isActive,\n            uint256 currentStake,\n            uint256 slashedStake,\n            uint256 compensation,\n            uint256 pendingWithdrawalAmount,\n            uint256 pendingWithdrawalEndAt\n        );\n\n    function getKeeperWorkerAndStake(\n        uint256 keeperId_\n    )\n        external\n        view\n        returns (address worker, uint256 currentStake, bool isActive);\n\n    function getJob(\n        bytes32 jobKey_\n    )\n        external\n        view\n        returns (\n            address owner,\n            address pendingTransfer,\n            uint256 jobLevelMinKeeperCvp,\n            Job memory details,\n            bytes memory preDefinedCalldata,\n            Resolver memory resolver\n        );\n\n    function getJobRaw(bytes32 jobKey_) external view returns (uint256 rawJob);\n\n    function jobOwnerCredits(\n        address owner_\n    ) external view returns (uint256 credits);\n\n    function getStrategy() external pure returns (string memory);\n\n    function CVP() external view returns (address);\n}\n\ninterface IPPAgentV2JobOwner {\n    struct RegisterJobParams {\n        address jobAddress;\n        bytes4 jobSelector;\n        bool useJobOwnerCredits;\n        bool assertResolverSelector;\n        uint16 maxBaseFeeGwei;\n        uint16 rewardPct;\n        uint32 fixedReward;\n        uint256 jobMinCvp;\n        uint8 calldataSource;\n        uint24 intervalSeconds;\n    }\n\n    struct Resolver {\n        address resolverAddress;\n        bytes resolverCalldata;\n    }\n\n    function registerJob(\n        RegisterJobParams calldata params_,\n        Resolver calldata resolver_,\n        bytes calldata preDefinedCalldata_\n    ) external payable returns (bytes32 jobKey, uint256 jobId);\n}\n"
+    },
+    "contracts/IPPSafeAgent.sol": {
+      "content": "// SPDX-License-Identifier: UNLICENSED\n\nimport \"./ISafe.sol\";\nimport {IPPAgentV2JobOwner} from \"./IPPAgentV2.sol\";\n\npragma solidity ^0.8.9;\n\ninterface IPPAgentSafeModule {\n    struct Tx {\n        address to;\n        bytes data;\n        uint256 value;\n        ISafe.Operation operation;\n    }\n\n    struct Job {\n        bool isActive;\n        uint24 intervalSeconds;\n        uint32 lastExecutionAt;\n    }\n\n    error ExecutionReverted();\n    error InactiveJob();\n    error InvalidSender();\n    error IntervalNotReached();\n\n    /**\n     *\n     * @param interval Interval in seconds\n     * @param isActive boolean\n     * @param tx_ Transaction which will be whitelisted to be executed\n     */\n    function updateJob(\n        uint24 interval,\n        bool isActive,\n        Tx calldata tx_\n    ) external;\n\n    /**\n     *\n     * @param safe Address of a Safe smart contract\n     * @param tx_ Transaction to be executed\n     */\n    function exec(address safe, Tx calldata tx_) external;\n\n    /**\n     *\n     * @param safe Address of a Safe smart contract wallet\n     * @param tx_ Transaction to be executed\n     */\n    function getJobInfo(\n        address safe,\n        Tx calldata tx_\n    ) external view returns (Job memory);\n}\n"
+    },
+    "contracts/ISafe.sol": {
+      "content": "// SPDX-License-Identifier: UNLICENSED\npragma solidity ^0.8.12;\n\ninterface ISafe {\n    enum Operation {\n        Call,\n        DelegateCall\n    }\n\n    /// @dev Allows a Module to execute a Safe transaction without any further confirmations and return data\n    /// @param to Destination address of module transaction.\n    /// @param value Ether value of module transaction.\n    /// @param data Data payload of module transaction.\n    /// @param operation Operation type of module transaction.\n    function execTransactionFromModuleReturnData(\n        address to,\n        uint256 value,\n        bytes memory data,\n        Operation operation\n    ) external returns (bool success, bytes memory returnData);\n}\n"
+    },
+    "contracts/PPSafeAgent.sol": {
+      "content": "// SPDX-License-Identifier: UNLICENSED\n\nimport \"./ISafe.sol\";\nimport {IPPAgentV2JobOwner} from \"./IPPAgentV2.sol\";\nimport {IPPAgentSafeModule} from \"./IPPSafeAgent.sol\";\n\npragma solidity ^0.8.9;\n\ncontract PPAgentSafeModule is IPPAgentSafeModule {\n    /**\n     * @dev Address of the PPAgent Contract\n     */\n    address private immutable AgentContract;\n\n    /**\n     * @notice\n     */\n    mapping(bytes32 => Job) internal jobs;\n\n    /**\n     *\n     * @param agentAddress Address of a PPAgent contract\n     */\n    constructor(address agentAddress) {\n        AgentContract = agentAddress;\n    }\n\n    modifier onlyAgent() {\n        if (msg.sender != AgentContract) revert InvalidSender();\n        _;\n    }\n\n    /**\n     *\n     * @param interval Interval in seconds\n     * @param isActive boolean\n     * @param tx_ Transaction which will be whitelisted to be executed\n     */\n    function updateJob(\n        uint24 interval,\n        bool isActive,\n        Tx calldata tx_\n    ) external {\n        Job storage job = jobs[keccak256(abi.encode(msg.sender, tx_))];\n\n        job.isActive = isActive;\n        job.intervalSeconds = interval;\n    }\n\n    /**\n     *\n     * @param safe Address of a Safe smart contract\n     * @param tx_ Transaction to be executed\n     */\n    function exec(address safe, Tx calldata tx_) external onlyAgent {\n        Job storage job = jobs[keccak256(abi.encode(safe, tx_))];\n\n        if (!job.isActive) revert InactiveJob();\n\n        uint256 nextExecutionAt;\n        unchecked {\n            nextExecutionAt = job.lastExecutionAt + job.intervalSeconds;\n        }\n        if (nextExecutionAt > block.timestamp) {\n            revert IntervalNotReached();\n        }\n\n        job.lastExecutionAt = uint32(block.timestamp);\n\n        (bool success, ) = ISafe(safe).execTransactionFromModuleReturnData(\n            tx_.to,\n            tx_.value,\n            tx_.data,\n            tx_.operation\n        );\n\n        if (!success) revert ExecutionReverted();\n    }\n\n    function getJobInfo(\n        address safe,\n        Tx calldata tx_\n    ) external view returns (Job memory) {\n        return jobs[keccak256(abi.encode(safe, tx_))];\n    }\n}\n"
+    }
+  },
+  "settings": {
+    "optimizer": {
+      "enabled": false,
+      "runs": 200
+    },
+    "outputSelection": {
+      "*": {
+        "*": [
+          "abi",
+          "evm.bytecode",
+          "evm.deployedBytecode",
+          "evm.methodIdentifiers",
+          "metadata",
+          "devdoc",
+          "userdoc",
+          "storageLayout",
+          "evm.gasEstimates"
+        ],
+        "": [
+          "ast"
+        ]
+      }
+    },
+    "metadata": {
+      "useLiteralContent": true
+    }
+  }
+}
