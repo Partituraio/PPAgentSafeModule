@@ -13,11 +13,6 @@ contract PPAgentSafeModule is IPPAgentSafeModule {
     address private immutable AgentContract;
 
     /**
-     * @notice
-     */
-    mapping(bytes32 => Job) internal jobs;
-
-    /**
      *
      * @param agentAddress Address of a PPAgent contract
      */
@@ -30,21 +25,22 @@ contract PPAgentSafeModule is IPPAgentSafeModule {
         _;
     }
 
-    /**
-     *
-     * @param interval Interval in seconds
-     * @param isActive boolean
-     * @param tx_ Transaction which will be whitelisted to be executed
-     */
-    function updateJob(
-        uint24 interval,
-        bool isActive,
-        Tx calldata tx_
-    ) external {
-        Job storage job = jobs[keccak256(abi.encode(msg.sender, tx_))];
-
-        job.isActive = isActive;
-        job.intervalSeconds = interval;
+    modifier onlyAssignedKeeper(address safe) {
+        address[] memory owners = ISafe(safe).getOwners();
+        IPPAgentV2JobOwner agent = IPPAgentV2JobOwner(AgentContract);
+        for (uint256 i = 1; i < type(uint256).max; i++) {
+            bytes32 jobKey = agent.getJobKey(address(this), i);
+            (address jobOwner, , , , , ) = agent.getJob(jobKey);
+            if (jobOwner == address(0)) {
+                revert();
+            }
+            uint256 keeperId = agent.jobNextKeeperId(jobKey);
+            (, address worker, , , , , , ) = agent.getKeeper(keeperId);
+            if (worker == tx.origin && jobOwner == owners[0]) {
+                _;
+                break;
+            }
+        }
     }
 
     /**
@@ -52,21 +48,10 @@ contract PPAgentSafeModule is IPPAgentSafeModule {
      * @param safe Address of a Safe smart contract
      * @param tx_ Transaction to be executed
      */
-    function exec(address safe, Tx calldata tx_) external onlyAgent {
-        Job storage job = jobs[keccak256(abi.encode(safe, tx_))];
-
-        if (!job.isActive) revert InactiveJob();
-
-        uint256 nextExecutionAt;
-        unchecked {
-            nextExecutionAt = job.lastExecutionAt + job.intervalSeconds;
-        }
-        if (nextExecutionAt > block.timestamp) {
-            revert IntervalNotReached();
-        }
-
-        job.lastExecutionAt = uint32(block.timestamp);
-
+    function exec(
+        address safe,
+        Tx calldata tx_
+    ) external onlyAssignedKeeper(safe) {
         (bool success, ) = ISafe(safe).execTransactionFromModuleReturnData(
             tx_.to,
             tx_.value,
@@ -75,12 +60,5 @@ contract PPAgentSafeModule is IPPAgentSafeModule {
         );
 
         if (!success) revert ExecutionReverted();
-    }
-
-    function getJobInfo(
-        address safe,
-        Tx calldata tx_
-    ) external view returns (Job memory) {
-        return jobs[keccak256(abi.encode(safe, tx_))];
     }
 }

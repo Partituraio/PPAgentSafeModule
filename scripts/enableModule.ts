@@ -91,23 +91,6 @@ async function main() {
     transactions.push(enableModuleMetaTx);
   }
 
-  const jobInfo = await module.getJobInfo(safeAddress, tx);
-  if (jobInfo.isActive == false) {
-    console.log("Job is not enabled in the Module");
-
-    const updateJobData = await module.interface.encodeFunctionData(
-      "updateJob",
-      [params.intervalSeconds, true, tx]
-    );
-
-    const updateJobMetaTx: MetaTransactionData = {
-      to: moduleAddress,
-      value: "0",
-      data: updateJobData,
-    };
-    transactions.push(updateJobMetaTx);
-  }
-
   const props: CreateTransactionProps = {
     transactions,
   };
