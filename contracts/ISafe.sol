@@ -18,6 +18,4 @@ interface ISafe {
         bytes memory data,
         Operation operation
     ) external returns (bool success, bytes memory returnData);
-
-    function getOwners() external view returns (address[] memory);
 }

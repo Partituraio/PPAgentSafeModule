@@ -20,27 +20,26 @@ contract PPAgentSafeModule is IPPAgentSafeModule {
         AgentContract = agentAddress;
     }
 
+    /**
+     *
+     * @dev Only the PPAgent contract can execute transactions
+     */
     modifier onlyAgent() {
         if (msg.sender != AgentContract) revert InvalidSender();
         _;
     }
 
-    modifier onlyAssignedKeeper(address safe) {
-        address[] memory owners = ISafe(safe).getOwners();
-        IPPAgentV2JobOwner agent = IPPAgentV2JobOwner(AgentContract);
-        for (uint256 i = 1; i < type(uint256).max; i++) {
-            bytes32 jobKey = agent.getJobKey(address(this), i);
-            (address jobOwner, , , , , ) = agent.getJob(jobKey);
-            if (jobOwner == address(0)) {
-                revert();
-            }
-            uint256 keeperId = agent.jobNextKeeperId(jobKey);
-            (, address worker, , , , , , ) = agent.getKeeper(keeperId);
-            if (worker == tx.origin && jobOwner == owners[0]) {
-                _;
-                break;
-            }
-        }
+    /**
+     *
+     * @dev Only owned by a safe wallet jobs can be executed on the safe wallet
+     */
+    modifier onlyOnwedJob(address wallet) {
+        bytes32 jobKey = _getJobKey();
+        (address jobOwner, , , , , ) = IPPAgentV2JobOwner(AgentContract).getJob(
+            jobKey
+        );
+        if (wallet != jobOwner) revert InvalidJobOwner();
+        _;
     }
 
     /**
@@ -51,7 +50,7 @@ contract PPAgentSafeModule is IPPAgentSafeModule {
     function exec(
         address safe,
         Tx calldata tx_
-    ) external onlyAssignedKeeper(safe) {
+    ) external onlyAgent onlyOnwedJob(safe) {
         (bool success, ) = ISafe(safe).execTransactionFromModuleReturnData(
             tx_.to,
             tx_.value,
@@ -60,5 +59,15 @@ contract PPAgentSafeModule is IPPAgentSafeModule {
         );
 
         if (!success) revert ExecutionReverted();
+    }
+
+    /**
+     * @dev Returns last 32 bytes of calldata
+     * @dev The last 32 bytes of the calldata is the jobKey
+     */
+    function _getJobKey() private pure returns (bytes32 jobKey) {
+        assembly {
+            jobKey := calldataload(sub(calldatasize(), 32))
+        }
     }
 }

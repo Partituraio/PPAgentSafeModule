@@ -14,7 +14,7 @@ interface IPPAgentSafeModule {
     }
 
     error ExecutionReverted();
-    error InactiveJob();
+    error InvalidJobOwner();
     error InvalidSender();
     error IntervalNotReached();
 

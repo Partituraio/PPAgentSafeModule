@@ -52,14 +52,14 @@ async function main() {
   const params: IPPAgentV2JobOwner.RegisterJobParamsStruct = {
     jobAddress: moduleAddress,
     jobSelector: "0x00000000",
-    useJobOwnerCredits: true,
+    useJobOwnerCredits: false,
     assertResolverSelector: false,
     maxBaseFeeGwei: 1000,
     rewardPct: 0,
     fixedReward: 5000,
     jobMinCvp: 1000,
     calldataSource: 1,
-    intervalSeconds: 86400,
+    intervalSeconds: 250,
   };
   const resolver: IPPAgentV2JobOwner.ResolverStruct = {
     resolverAddress: "0x0000000000000000000000000000000000000000",
@@ -68,7 +68,7 @@ async function main() {
   const tx: IPPAgentSafeModule.TxStruct = {
     to: receiverAddress,
     data: "0x",
-    value: "0",
+    value: "1",
     operation: "0",
   };
 
@@ -82,7 +82,7 @@ async function main() {
   if ((await safeSdk.isModuleEnabled(moduleAddress)) == false) {
     console.log("Module is not enabled");
     const enableModuleTx = await safeSdk.createEnableModuleTx(moduleAddress);
-    const enableModuleMetaTx = {
+    const enableModuleMetaTx: MetaTransactionData = {
       to: enableModuleTx.data.to,
       value: enableModuleTx.data.value,
       data: enableModuleTx.data.data,
@@ -90,6 +90,18 @@ async function main() {
     };
     transactions.push(enableModuleMetaTx);
   }
+
+  const registerJobMetaTx: MetaTransactionData = {
+    to: await agentContract.getAddress(),
+    value: ethers.parseEther("0.05").toString(),
+    data: await agentContract.interface.encodeFunctionData("registerJob", [
+      params,
+      resolver,
+      calldata,
+    ]),
+  };
+
+  transactions.push(registerJobMetaTx);
 
   const props: CreateTransactionProps = {
     transactions,
@@ -100,11 +112,7 @@ async function main() {
     const safeTx = await safeSdk.createTransaction(props);
     res = await safeSdk.executeTransaction(safeTx);
     console.log(`Safe TX: ${res.hash}`);
-    await res.transactionResponse?.wait(2);
   }
-
-  res = await agentContract.registerJob(params, resolver, calldata);
-  console.log(`RegisterJob TX: ${res.hash}`);
 }
 
 main().catch((error) => {
