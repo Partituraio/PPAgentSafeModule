@@ -1,17 +1,32 @@
 # PowerPool Agent Safe Module
 
+>## The code is not audited yet! Use on your own risk!
+
 ## Overview
 
-Description soon...
+PowerPool Agent Safe Module allows users to automate transactions on their Safe wallets using
+PowerPool automation network.
+
+
+```
+                   exec()                execTransactionFromModule()
+                    |                                |
+     +---------+    |       +------------------+     |     +------------------+
+     |         |    |       |                  |     |     |                  |
+     | PPAgent |----------->|  PPAgent Module  |---------->|    Safe Wallet   |
+     |         |            |                  |           |                  |
+     +---------+            +------------------+           +------------------+
+
+```
 
 ## Setup
 
-Fullfill `.env` file
+Fullfill `.env` file:
 ```
 # [Required] Private key of a deployer wallet and of the Safe owner
 DEPLOYER_PRIVATE_KEY='...'
 
-# [Optional] Address of a Safe wallet which will use module
+# Address of a Safe wallet which will use module
 SAFE_WALLET_ADDRESS='0x...'
 
 # [Optional]
@@ -29,6 +44,7 @@ To deploy the module contract run:
 
 ```
 npx hardhat deploy --network <NETWORK>
+
 ```
 
 ## Run
