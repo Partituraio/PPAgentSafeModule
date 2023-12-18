@@ -17,14 +17,14 @@ async function main() {
 
   const safeSdk = await Safe.create({ ethAdapter, safeAddress });
 
-  if ((await safeSdk.isModuleEnabled(moduleAddress)) == true) {
-    console.log("Module has been already enabled");
+  if ((await safeSdk.isModuleEnabled(moduleAddress)) == false) {
+    console.log("The Module is disabled");
     return;
   }
 
-  const enableModuleTx = await safeSdk.createEnableModuleTx(moduleAddress);
+  const disableModuleTx = await safeSdk.createDisableModuleTx(moduleAddress);
 
-  const res = await safeSdk.executeTransaction(enableModuleTx);
+  const res = await safeSdk.executeTransaction(disableModuleTx);
   console.log(`Enable Module TX: ${res.hash}`);
 }
 
