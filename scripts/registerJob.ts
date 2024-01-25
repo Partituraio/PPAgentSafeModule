@@ -32,14 +32,18 @@ async function main() {
   // registerJob top-ups the balance of the job on 0.05 (xDAI)
   const receiverAddress = (await safeSdk.getOwners())[0];
 
-  const tx: IPPAgentSafeModule.TxStruct = {
-    to: receiverAddress,
-    data: "0x",
-    value: "1",
-    operation: "0",
-  };
-
-  const module = await ethers.getContractAt("PPAgentSafeModule", moduleAddress);
+  const taskTransactions: MetaTransactionData[] = [
+    {
+      to: receiverAddress,
+      data: "0x",
+      value: "1",
+    },
+    {
+      to: receiverAddress,
+      data: "0x",
+      value: "1",
+    },
+  ];
 
   const params: IPPAgentV2JobOwner.RegisterJobParamsStruct = {
     jobAddress: moduleAddress,
@@ -58,13 +62,20 @@ async function main() {
     resolverCalldata: "0x",
   };
 
+  const module = await ethers.getContractAt("PPAgentSafeModule", moduleAddress);
+
+  const txToExec = await safeSdk.createTransaction({
+    transactions: taskTransactions,
+  });
+
   const calldata = module.interface.encodeFunctionData("exec", [
     safeAddress,
-    tx,
+    txToExec.data,
   ]);
 
   const transactions: MetaTransactionData[] = [];
 
+  // check if the module is enabled
   if ((await safeSdk.isModuleEnabled(moduleAddress)) == false) {
     console.log("Module is not enabled");
     const enableModuleTx = await safeSdk.createEnableModuleTx(moduleAddress);

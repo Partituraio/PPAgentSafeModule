@@ -8,9 +8,18 @@ import dotenv from "dotenv";
 dotenv.config();
 
 const config: HardhatUserConfig = {
-  solidity: "0.8.19",
+  solidity: {
+    version: "0.8.19",
+    settings: {
+      evmVersion: "paris",
+      optimizer: {
+        enabled: true,
+        runs: 10_000_000,
+      },
+    },
+  },
+
   networks: {
-    hardhat: {},
     gnosis: {
       url: "https://rpc.ankr.com/gnosis",
       accounts: [process.env.DEPLOYER_PRIVATE_KEY!],

@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: UNLICENSED
 
-import "./ISafe.sol";
-import {IPPAgentV2JobOwner} from "./IPPAgentV2.sol";
-import {IPPAgentSafeModule} from "./IPPSafeAgent.sol";
+import "./interfaces/ISafe.sol";
+import {IPPAgentV2JobOwner} from "./interfaces/IPPAgentV2.sol";
+import {IPPAgentSafeModule} from "./interfaces/IPPSafeAgent.sol";
 
 pragma solidity ^0.8.9;
 
