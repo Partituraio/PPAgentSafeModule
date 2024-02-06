@@ -58,7 +58,7 @@ npx hardhat run scripts/enableModule.ts --network <NETWORK>
 ## Deployed contracts
 |Network|Module|
 |---|---|
+|Ethereum|0x9381e79B3744aFA1c8b538c993a3E74Dcb6D9388|
 |Gnosis|0xC139814f7247e0fCEeAFBEbA92EF430E7507288e|
 |Arbitrum|0xF4659dC0842A416c1DC7B86751E6f0b1DCe95569|
 |Sepolia|0xF4659dC0842A416c1DC7B86751E6f0b1DCe95569|
-|Ethereum|TBD|

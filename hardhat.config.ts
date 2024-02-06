@@ -32,9 +32,10 @@ const config: HardhatUserConfig = {
       url: "https://ethereum-sepolia.publicnode.com",
       accounts: [process.env.DEPLOYER_PRIVATE_KEY!],
     },
-    // mainnet: {
-    //   //
-    // },
+    mainnet: {
+      url: "https://eth.drpc.org	",
+      accounts: [process.env.DEPLOYER_PRIVATE_KEY!],
+    },
   },
   namedAccounts: {
     deployer: { default: 0 },

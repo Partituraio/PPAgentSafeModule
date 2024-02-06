@@ -1,0 +1,131 @@
+{
+  "address": "0x9381e79B3744aFA1c8b538c993a3E74Dcb6D9388",
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "agentAddress",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "constructor"
+    },
+    {
+      "inputs": [],
+      "name": "ExecutionReverted",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "IntervalNotReached",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "InvalidJobOwner",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "InvalidSender",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "safe",
+          "type": "address"
+        },
+        {
+          "components": [
+            {
+              "internalType": "address",
+              "name": "to",
+              "type": "address"
+            },
+            {
+              "internalType": "bytes",
+              "name": "data",
+              "type": "bytes"
+            },
+            {
+              "internalType": "uint256",
+              "name": "value",
+              "type": "uint256"
+            },
+            {
+              "internalType": "enum ISafe.Operation",
+              "name": "operation",
+              "type": "uint8"
+            }
+          ],
+          "internalType": "struct IPPAgentSafeModule.Tx",
+          "name": "tx_",
+          "type": "tuple"
+        }
+      ],
+      "name": "exec",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    }
+  ],
+  "transactionHash": "0x051b97790785071188b20416703bb8251bf3d58759b95c2e2cbca589fca96d16",
+  "receipt": {
+    "to": null,
+    "from": "0x8c081a7e2b018aBBa53d968E773e455DDc5cA808",
+    "contractAddress": "0x9381e79B3744aFA1c8b538c993a3E74Dcb6D9388",
+    "transactionIndex": 156,
+    "gasUsed": "574069",
+    "logsBloom": "0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+    "blockHash": "0x5753cc899ab8dadd574fed754e11820d8a21eed934e4ba7deeea18155c7e2cc8",
+    "transactionHash": "0x051b97790785071188b20416703bb8251bf3d58759b95c2e2cbca589fca96d16",
+    "logs": [],
+    "blockNumber": 19170760,
+    "cumulativeGasUsed": "29884364",
+    "status": 1,
+    "byzantium": true
+  },
+  "args": [
+    "0xc9ce4CdA5897707546F3904C0FfCC6e429bC4546"
+  ],
+  "numDeployments": 1,
+  "solcInputHash": "f2419f9da5fe0cccbe04c98137ce1313",
+  "metadata": "{\"compiler\":{\"version\":\"0.8.19+commit.7dd6d404\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[{\"internalType\":\"address\",\"name\":\"agentAddress\",\"type\":\"address\"}],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"inputs\":[],\"name\":\"ExecutionReverted\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"IntervalNotReached\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"InvalidJobOwner\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"InvalidSender\",\"type\":\"error\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"safe\",\"type\":\"address\"},{\"components\":[{\"internalType\":\"address\",\"name\":\"to\",\"type\":\"address\"},{\"internalType\":\"bytes\",\"name\":\"data\",\"type\":\"bytes\"},{\"internalType\":\"uint256\",\"name\":\"value\",\"type\":\"uint256\"},{\"internalType\":\"enum ISafe.Operation\",\"name\":\"operation\",\"type\":\"uint8\"}],\"internalType\":\"struct IPPAgentSafeModule.Tx\",\"name\":\"tx_\",\"type\":\"tuple\"}],\"name\":\"exec\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{\"constructor\":{\"params\":{\"agentAddress\":\"Address of a PPAgent contract\"}},\"exec(address,(address,bytes,uint256,uint8))\":{\"params\":{\"safe\":\"Address of a Safe smart contract\",\"tx_\":\"Transaction to be executed\"}}},\"stateVariables\":{\"AgentContract\":{\"details\":\"Address of the PPAgent Contract\"}},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"contracts/PPSafeAgent.sol\":\"PPAgentSafeModule\"},\"evmVersion\":\"paris\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\",\"useLiteralContent\":true},\"optimizer\":{\"enabled\":true,\"runs\":10000000},\"remappings\":[]},\"sources\":{\"contracts/PPSafeAgent.sol\":{\"content\":\"// SPDX-License-Identifier: UNLICENSED\\n\\nimport \\\"./interfaces/ISafe.sol\\\";\\nimport {IPPAgentV2JobOwner} from \\\"./interfaces/IPPAgentV2.sol\\\";\\nimport {IPPAgentSafeModule} from \\\"./interfaces/IPPSafeAgent.sol\\\";\\n\\npragma solidity ^0.8.9;\\n\\ncontract PPAgentSafeModule is IPPAgentSafeModule {\\n    /**\\n     * @dev Address of the PPAgent Contract\\n     */\\n    address private immutable AgentContract;\\n\\n    /**\\n     *\\n     * @param agentAddress Address of a PPAgent contract\\n     */\\n    constructor(address agentAddress) {\\n        AgentContract = agentAddress;\\n    }\\n\\n    /**\\n     *\\n     * @dev Only the PPAgent contract can execute transactions\\n     */\\n    modifier onlyAgent() {\\n        if (msg.sender != AgentContract) revert InvalidSender();\\n        _;\\n    }\\n\\n    /**\\n     *\\n     * @dev Only owned by a safe wallet jobs can be executed on the safe wallet\\n     */\\n    modifier onlyOnwedJob(address wallet) {\\n        bytes32 jobKey = _getJobKey();\\n        (address jobOwner, , , , , ) = IPPAgentV2JobOwner(AgentContract).getJob(\\n            jobKey\\n        );\\n        if (wallet != jobOwner) revert InvalidJobOwner();\\n        _;\\n    }\\n\\n    /**\\n     *\\n     * @param safe Address of a Safe smart contract\\n     * @param tx_ Transaction to be executed\\n     */\\n    function exec(\\n        address safe,\\n        Tx calldata tx_\\n    ) external onlyAgent onlyOnwedJob(safe) {\\n        (bool success, ) = ISafe(safe).execTransactionFromModuleReturnData(\\n            tx_.to,\\n            tx_.value,\\n            tx_.data,\\n            tx_.operation\\n        );\\n\\n        if (!success) revert ExecutionReverted();\\n    }\\n\\n    /**\\n     * @dev Returns last 32 bytes of calldata\\n     * @dev The last 32 bytes of the calldata is the jobKey\\n     */\\n    function _getJobKey() private pure returns (bytes32 jobKey) {\\n        assembly {\\n            jobKey := calldataload(sub(calldatasize(), 32))\\n        }\\n    }\\n}\\n\",\"keccak256\":\"0x7a83b80b4d43d67a0599db69d9a76c190835302511411867280ad008e9617f30\",\"license\":\"UNLICENSED\"},\"contracts/interfaces/IPPAgentV2.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\npragma solidity ^0.8.12;\\n\\ninterface IPPAgentV2JobOwner {\\n    struct RegisterJobParams {\\n        address jobAddress;\\n        bytes4 jobSelector;\\n        bool useJobOwnerCredits;\\n        bool assertResolverSelector;\\n        uint16 maxBaseFeeGwei;\\n        uint16 rewardPct;\\n        uint32 fixedReward;\\n        uint256 jobMinCvp;\\n        uint8 calldataSource;\\n        uint24 intervalSeconds;\\n    }\\n\\n    struct Job {\\n        uint8 config;\\n        bytes4 selector;\\n        uint88 credits;\\n        uint16 maxBaseFeeGwei;\\n        uint16 rewardPct;\\n        uint32 fixedReward;\\n        uint8 calldataSource;\\n        // For interval jobs\\n        uint24 intervalSeconds;\\n        uint32 lastExecutionAt;\\n    }\\n\\n    struct Resolver {\\n        address resolverAddress;\\n        bytes resolverCalldata;\\n    }\\n\\n    function registerJob(\\n        RegisterJobParams calldata params_,\\n        Resolver calldata resolver_,\\n        bytes calldata preDefinedCalldata_\\n    ) external payable returns (bytes32 jobKey, uint256 jobId);\\n\\n    function getJobKey(\\n        address jobAddress_,\\n        uint256 jobId_\\n    ) external pure returns (bytes32 jobKey);\\n\\n    function getJobRaw(bytes32 jobKey_) external view returns (uint256 rawJob);\\n\\n    function jobNextKeeperId(bytes32 jobKey_) external view returns (uint256);\\n\\n    function getKeeper(\\n        uint256 keeperId_\\n    )\\n        external\\n        view\\n        returns (\\n            address admin,\\n            address worker,\\n            bool isActive,\\n            uint256 currentStake,\\n            uint256 slashedStake,\\n            uint256 compensation,\\n            uint256 pendingWithdrawalAmount,\\n            uint256 pendingWithdrawalEndAt\\n        );\\n\\n    function getJob(\\n        bytes32 jobKey_\\n    )\\n        external\\n        view\\n        returns (\\n            address owner,\\n            address pendingTransfer,\\n            uint256 jobLevelMinKeeperCvp,\\n            Job memory details,\\n            bytes memory preDefinedCalldata,\\n            Resolver memory resolver\\n        );\\n}\\n\",\"keccak256\":\"0x2dc324c4f437da7e07315c48cfd390465b59cac3cccb10efd799e1633177430a\",\"license\":\"MIT\"},\"contracts/interfaces/IPPSafeAgent.sol\":{\"content\":\"// SPDX-License-Identifier: UNLICENSED\\n\\nimport \\\"./ISafe.sol\\\";\\nimport {IPPAgentV2JobOwner} from \\\"./IPPAgentV2.sol\\\";\\n\\npragma solidity ^0.8.9;\\n\\ninterface IPPAgentSafeModule {\\n    struct Tx {\\n        address to;\\n        bytes data;\\n        uint256 value;\\n        ISafe.Operation operation;\\n    }\\n\\n    error ExecutionReverted();\\n    error InvalidJobOwner();\\n    error InvalidSender();\\n    error IntervalNotReached();\\n\\n    /**\\n     *\\n     * @param safe Address of a Safe smart contract\\n     * @param tx_ Transaction to be executed\\n     */\\n    function exec(address safe, Tx calldata tx_) external;\\n}\\n\",\"keccak256\":\"0x7cdc1c6cc945f4a2174cc41336f8c72eb6fab46c16406dc7cf75cccf96b4ac3b\",\"license\":\"UNLICENSED\"},\"contracts/interfaces/ISafe.sol\":{\"content\":\"// SPDX-License-Identifier: UNLICENSED\\npragma solidity ^0.8.12;\\n\\ninterface ISafe {\\n    enum Operation {\\n        Call,\\n        DelegateCall\\n    }\\n\\n    /// @dev Allows a Module to execute a Safe transaction without any further confirmations and return data\\n    /// @param to Destination address of module transaction.\\n    /// @param value Ether value of module transaction.\\n    /// @param data Data payload of module transaction.\\n    /// @param operation Operation type of module transaction.\\n    function execTransactionFromModuleReturnData(\\n        address to,\\n        uint256 value,\\n        bytes memory data,\\n        Operation operation\\n    ) external returns (bool success, bytes memory returnData);\\n}\\n\",\"keccak256\":\"0x0e8e16fcd99c660bb6967fb3e9ae92829d21a3d9a49e5a2884e4e17a40482b78\",\"license\":\"UNLICENSED\"}},\"version\":1}",
+  "bytecode": "0x60a060405234801561001057600080fd5b50604051610a00380380610a0083398101604081905261002f91610040565b6001600160a01b0316608052610070565b60006020828403121561005257600080fd5b81516001600160a01b038116811461006957600080fd5b9392505050565b60805161096f61009160003960008181605d0152610125015261096f6000f3fe608060405234801561001057600080fd5b506004361061002b5760003560e01c8063c0bc1e3d14610030575b600080fd5b61004361003e366004610357565b610045565b005b3373ffffffffffffffffffffffffffffffffffffffff7f000000000000000000000000000000000000000000000000000000000000000016146100b4576040517fddb5de5e00000000000000000000000000000000000000000000000000000000815260040160405180910390fd5b816000367fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffe001356040517ff729cf0d0000000000000000000000000000000000000000000000000000000081526004810182905290915060009073ffffffffffffffffffffffffffffffffffffffff7f0000000000000000000000000000000000000000000000000000000000000000169063f729cf0d90602401600060405180830381865afa15801561016c573d6000803e3d6000fd5b505050506040513d6000823e601f3d9081017fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffe01682016040526101b2919081019061060d565b505050505090508073ffffffffffffffffffffffffffffffffffffffff168373ffffffffffffffffffffffffffffffffffffffff161461021e576040517fe12233c300000000000000000000000000000000000000000000000000000000815260040160405180910390fd5b600073ffffffffffffffffffffffffffffffffffffffff8616635229073f6102496020880188610780565b604088013561025b60208a018a6107a4565b61026b60808c0160608d01610810565b6040518663ffffffff1660e01b815260040161028b959493929190610831565b6000604051808303816000875af11580156102aa573d6000803e3d6000fd5b505050506040513d6000823e601f3d9081017fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffe01682016040526102f091908101906108e3565b5090508061032a576040517ff21e646b00000000000000000000000000000000000000000000000000000000815260040160405180910390fd5b505050505050565b73ffffffffffffffffffffffffffffffffffffffff8116811461035457600080fd5b50565b6000806040838503121561036a57600080fd5b823561037581610332565b9150602083013567ffffffffffffffff81111561039157600080fd5b8301608081860312156103a357600080fd5b809150509250929050565b7f4e487b7100000000000000000000000000000000000000000000000000000000600052604160045260246000fd5b604051610120810167ffffffffffffffff81118282101715610401576104016103ae565b60405290565b604051601f82017fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffe016810167ffffffffffffffff8111828210171561044e5761044e6103ae565b604052919050565b805160ff8116811461046757600080fd5b919050565b80517fffffffff000000000000000000000000000000000000000000000000000000008116811461046757600080fd5b80516affffffffffffffffffffff8116811461046757600080fd5b805161ffff8116811461046757600080fd5b805163ffffffff8116811461046757600080fd5b805162ffffff8116811461046757600080fd5b600082601f83011261050157600080fd5b815167ffffffffffffffff81111561051b5761051b6103ae565b602061054d817fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffe0601f85011601610407565b828152858284870101111561056157600080fd5b60005b8381101561057f578581018301518282018401528201610564565b506000928101909101919091529392505050565b6000604082840312156105a557600080fd5b6040516040810167ffffffffffffffff82821081831117156105c9576105c96103ae565b81604052829350845191506105dd82610332565b908252602084015190808211156105f357600080fd5b50610600858286016104f0565b6020830152505092915050565b6000806000806000808688036101c081121561062857600080fd5b875161063381610332565b602089015190975061064481610332565b8096505060408801519450610120807fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffa08301121561068157600080fd5b6106896103dd565b915061069760608a01610456565b82526106a560808a0161046c565b60208301526106b660a08a0161049c565b60408301526106c760c08a016104b7565b60608301526106d860e08a016104b7565b60808301526101006106eb818b016104c9565b60a08401526106fb828b01610456565b60c084015261070d6101408b016104dd565b60e084015261071f6101608b016104c9565b908301525061018088015190935067ffffffffffffffff8082111561074357600080fd5b61074f8a838b016104f0565b93506101a089015191508082111561076657600080fd5b5061077389828a01610593565b9150509295509295509295565b60006020828403121561079257600080fd5b813561079d81610332565b9392505050565b60008083357fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffe18436030181126107d957600080fd5b83018035915067ffffffffffffffff8211156107f457600080fd5b60200191503681900382131561080957600080fd5b9250929050565b60006020828403121561082257600080fd5b81356002811061079d57600080fd5b73ffffffffffffffffffffffffffffffffffffffff8616815284602082015260806040820152826080820152828460a0830137600060a08483010152600060a07fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffe0601f8601168301019050600283106108d3577f4e487b7100000000000000000000000000000000000000000000000000000000600052602160045260246000fd5b8260608301529695505050505050565b600080604083850312156108f657600080fd5b8251801515811461090657600080fd5b602084015190925067ffffffffffffffff81111561092357600080fd5b61092f858286016104f0565b915050925092905056fea26469706673582212209fd45019168e3a05231ab621460c817cd483e0da555c9cfb374a225fce6b868d64736f6c63430008130033",
+  "deployedBytecode": "0x608060405234801561001057600080fd5b506004361061002b5760003560e01c8063c0bc1e3d14610030575b600080fd5b61004361003e366004610357565b610045565b005b3373ffffffffffffffffffffffffffffffffffffffff7f000000000000000000000000000000000000000000000000000000000000000016146100b4576040517fddb5de5e00000000000000000000000000000000000000000000000000000000815260040160405180910390fd5b816000367fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffe001356040517ff729cf0d0000000000000000000000000000000000000000000000000000000081526004810182905290915060009073ffffffffffffffffffffffffffffffffffffffff7f0000000000000000000000000000000000000000000000000000000000000000169063f729cf0d90602401600060405180830381865afa15801561016c573d6000803e3d6000fd5b505050506040513d6000823e601f3d9081017fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffe01682016040526101b2919081019061060d565b505050505090508073ffffffffffffffffffffffffffffffffffffffff168373ffffffffffffffffffffffffffffffffffffffff161461021e576040517fe12233c300000000000000000000000000000000000000000000000000000000815260040160405180910390fd5b600073ffffffffffffffffffffffffffffffffffffffff8616635229073f6102496020880188610780565b604088013561025b60208a018a6107a4565b61026b60808c0160608d01610810565b6040518663ffffffff1660e01b815260040161028b959493929190610831565b6000604051808303816000875af11580156102aa573d6000803e3d6000fd5b505050506040513d6000823e601f3d9081017fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffe01682016040526102f091908101906108e3565b5090508061032a576040517ff21e646b00000000000000000000000000000000000000000000000000000000815260040160405180910390fd5b505050505050565b73ffffffffffffffffffffffffffffffffffffffff8116811461035457600080fd5b50565b6000806040838503121561036a57600080fd5b823561037581610332565b9150602083013567ffffffffffffffff81111561039157600080fd5b8301608081860312156103a357600080fd5b809150509250929050565b7f4e487b7100000000000000000000000000000000000000000000000000000000600052604160045260246000fd5b604051610120810167ffffffffffffffff81118282101715610401576104016103ae565b60405290565b604051601f82017fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffe016810167ffffffffffffffff8111828210171561044e5761044e6103ae565b604052919050565b805160ff8116811461046757600080fd5b919050565b80517fffffffff000000000000000000000000000000000000000000000000000000008116811461046757600080fd5b80516affffffffffffffffffffff8116811461046757600080fd5b805161ffff8116811461046757600080fd5b805163ffffffff8116811461046757600080fd5b805162ffffff8116811461046757600080fd5b600082601f83011261050157600080fd5b815167ffffffffffffffff81111561051b5761051b6103ae565b602061054d817fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffe0601f85011601610407565b828152858284870101111561056157600080fd5b60005b8381101561057f578581018301518282018401528201610564565b506000928101909101919091529392505050565b6000604082840312156105a557600080fd5b6040516040810167ffffffffffffffff82821081831117156105c9576105c96103ae565b81604052829350845191506105dd82610332565b908252602084015190808211156105f357600080fd5b50610600858286016104f0565b6020830152505092915050565b6000806000806000808688036101c081121561062857600080fd5b875161063381610332565b602089015190975061064481610332565b8096505060408801519450610120807fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffa08301121561068157600080fd5b6106896103dd565b915061069760608a01610456565b82526106a560808a0161046c565b60208301526106b660a08a0161049c565b60408301526106c760c08a016104b7565b60608301526106d860e08a016104b7565b60808301526101006106eb818b016104c9565b60a08401526106fb828b01610456565b60c084015261070d6101408b016104dd565b60e084015261071f6101608b016104c9565b908301525061018088015190935067ffffffffffffffff8082111561074357600080fd5b61074f8a838b016104f0565b93506101a089015191508082111561076657600080fd5b5061077389828a01610593565b9150509295509295509295565b60006020828403121561079257600080fd5b813561079d81610332565b9392505050565b60008083357fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffe18436030181126107d957600080fd5b83018035915067ffffffffffffffff8211156107f457600080fd5b60200191503681900382131561080957600080fd5b9250929050565b60006020828403121561082257600080fd5b81356002811061079d57600080fd5b73ffffffffffffffffffffffffffffffffffffffff8616815284602082015260806040820152826080820152828460a0830137600060a08483010152600060a07fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffe0601f8601168301019050600283106108d3577f4e487b7100000000000000000000000000000000000000000000000000000000600052602160045260246000fd5b8260608301529695505050505050565b600080604083850312156108f657600080fd5b8251801515811461090657600080fd5b602084015190925067ffffffffffffffff81111561092357600080fd5b61092f858286016104f0565b915050925092905056fea26469706673582212209fd45019168e3a05231ab621460c817cd483e0da555c9cfb374a225fce6b868d64736f6c63430008130033",
+  "devdoc": {
+    "kind": "dev",
+    "methods": {
+      "constructor": {
+        "params": {
+          "agentAddress": "Address of a PPAgent contract"
+        }
+      },
+      "exec(address,(address,bytes,uint256,uint8))": {
+        "params": {
+          "safe": "Address of a Safe smart contract",
+          "tx_": "Transaction to be executed"
+        }
+      }
+    },
+    "stateVariables": {
+      "AgentContract": {
+        "details": "Address of the PPAgent Contract"
+      }
+    },
+    "version": 1
+  },
+  "userdoc": {
+    "kind": "user",
+    "methods": {},
+    "version": 1
+  },
+  "storageLayout": {
+    "storage": [],
+    "types": null
+  }
+}
